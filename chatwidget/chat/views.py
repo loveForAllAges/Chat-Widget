@@ -9,3 +9,11 @@ class ChatList(ListView):
 
 def chat_create(request, uuid):
     pass
+
+
+def chat_delete(request, uuid):
+    pass
+
+
+def chat(request, uuid):
+    pass
