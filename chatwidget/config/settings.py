@@ -5,17 +5,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&r-3m1g*ci%lk2c$3az1zrjx@46y21qu_b9bu*rt^_g-pke1+z'
 DEBUG = True
 ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'account.User'
 
 
 INSTALLED_APPS = [
     'daphne',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chat'
+    'chat',
+    'account'
 ]
 
 
@@ -44,6 +47,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'chat.context_processors.chat'
             ],
         },
     },

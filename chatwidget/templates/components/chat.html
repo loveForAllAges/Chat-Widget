@@ -1,0 +1,213 @@
+<div class="fixed bottom-0 right-0 mb-4 mr-4">
+    <button type="button" id="chat-open" data-drawer-target="chat-widget" data-drawer-show="chat-widget" data-drawer-placement="right" data-drawer-backdrop="false" aria-controls="chat-widget" class="flex items-center justify-center text-white bg-blue-700 rounded-full w-12 h-12 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+        </svg>
+    </button>
+</div>
+
+<div id="chat-widget" class="mb-4 pr-4 fixed top-auto bottom-0 right-0 z-40 transition-transform translate-x-full" tabindex="-1" aria-labelledby="chat-widget">
+    <div class="bg-white w-80 border shadow rounded-lg">
+        <div class="border-b">
+            <div class="h-12 sm:h-14 flex items-center justify-between rounded-t space-x-4 px-4">
+                <h2 class="text-lg font-medium text-gray-900">Чат поддержки</h2>
+            
+                <button type="button" data-drawer-hide="chat-widget" aria-controls="filtersModal" class="-mr-1 p-1 text-gray-400 hover:text-gray-500">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="h-96 p-2 overflow-y-auto">
+            <!-- <div class="mb-2 text-right">
+                <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
+            </div> -->
+            <div class="mb-2 bg-gray-200 text-gray-900 rounded-lg p-2 inline-block text-sm">
+                <span class="">Здравствуйте! Это служба поддержки. Здесь вы можете задать вопрос. Как к вам обращаться?</span>
+                <span class="-mb-1 block w-full text-xs text-gray-400 text-end">10:20</span>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 h-12 md:h-14 flex align-middle justify-between">
+            <div class="flex items-center justify-between w-full">
+                <input id="chat-input" type="text" name="send" class="block w-full bg-transparent border-none rounded-lg text-sm h-full border-transparent p-4 text-gray-900 focus:border-transparent focus:outline-none focus:ring-0" placeholder="Сообщение">
+                <div class="flex items-center justify-between">
+                    <button id="chat-send-message" type="button" class="hidden items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500 duration-150">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ request.session.session_key|json_script:"sessionId" }}
+<script>
+    const chatOpen = document.getElementById("chat-open");
+    const sessionId = document.getElementById("sessionId").textContent;
+    const sendChatMessageBtn = document.getElementById("chat-send-message");
+    const chatInput = document.getElementById("chat-input");
+
+    function getCookie(name) {
+        var cookieValue = null
+
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';')
+
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim()
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+
+                    break
+                }
+            }
+        }
+
+        return cookieValue
+    }
+
+    async function getChatData() {
+        const response = await fetch('/chat/get-chat-data/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                'sessionId': sessionId
+            })
+        })
+        const data = await response.json();
+        return data;
+    }
+
+    // async function openChat() {
+    //     console.log('Join chat');
+
+    //     const data = new FormData();
+    //     data.append('content', chatInput.value);
+
+    //     await fetch('/chat/chat-open/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-CSRFToken': getCookie('csrftoken')
+    //         },
+    //         body: data
+    //     })
+    //     .then(function(res) {
+    //         return res.json()
+    //     })
+    //     .then(function(data) {
+    //         console.log(data)
+    //     })
+    // }
+
+    chatOpen.onclick = async function(e) {
+        data = await getChatData();
+        console.log(`ws://${window.location.host}/ws/${data.id}/`)
+        // openChat();
+
+        const chatSocket = new WebSocket(`ws://${window.location.host}/ws/${data.id}/`);
+
+        chatSocket.onmessage = function(e) {
+            console.log("ON MESSAGE");
+        }
+
+        chatSocket.onclose = function(e) {
+            console.log("ON CLOSE");
+        }
+
+        chatSocket.onopen = function(e) {
+            console.log("ON OPEN");
+        }
+    }
+
+    // sendChatMessageBtn.onclick = function(e) {
+    //     joinChat();
+    //     chatInput.value = '';
+    // }
+
+    function checkInput() {
+        if (chatInput.value === '') {
+            sendChatMessageBtn.classList.remove('inline-flex')
+            sendChatMessageBtn.classList.add('hidden')
+        } else {
+            sendChatMessageBtn.classList.add('inline-flex')
+            sendChatMessageBtn.classList.remove('hidden')
+        }
+    }
+
+    chatInput.addEventListener('input', checkInput)
+
+    
+
+
+    // const chatbox = document.getElementById("chatbox");
+    // const chatContainer = document.getElementById("chat-container");
+    // const userInput = document.getElementById("user-input");
+    // const sendButton = document.getElementById("send-button");
+    // const openChatButton = document.getElementById("open-chat");
+    // const closeChatButton = document.getElementById("close-chat");
+
+    // let isChatboxOpen = true; // Set the initial state to open
+
+    // // Function to toggle the chatbox visibility
+    // function toggleChatbox() {
+    // chatContainer.classList.toggle("hidden");
+    // isChatboxOpen = !isChatboxOpen; // Toggle the state
+    // }
+
+    // // Add an event listener to the open chat button
+    // openChatButton.addEventListener("click", toggleChatbox);
+
+    // // Add an event listener to the close chat button
+    // closeChatButton.addEventListener("click", toggleChatbox);
+
+    // // Add an event listener to the send button
+    // sendButton.addEventListener("click", function () {
+    // const userMessage = userInput.value;
+    // if (userMessage.trim() !== "") {
+    //     addUserMessage(userMessage);
+    //     respondToUser(userMessage);
+    //     userInput.value = "";
+    // }
+    // });
+
+    // userInput.addEventListener("keyup", function (event) {
+    // if (event.key === "Enter") {
+    //     const userMessage = userInput.value;
+    //     addUserMessage(userMessage);
+    //     respondToUser(userMessage);
+    //     userInput.value = "";
+    // }
+    // });
+
+    // function addUserMessage(message) {
+    // const messageElement = document.createElement("div");
+    // messageElement.classList.add("mb-2", "text-right");
+    // messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+    // chatbox.appendChild(messageElement);
+    // chatbox.scrollTop = chatbox.scrollHeight;
+    // }
+
+    // function addBotMessage(message) {
+    // const messageElement = document.createElement("div");
+    // messageElement.classList.add("mb-2");
+    // messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+    // chatbox.appendChild(messageElement);
+    // chatbox.scrollTop = chatbox.scrollHeight;
+    // }
+
+    // function respondToUser(userMessage) {
+    // // Replace this with your chatbot logic
+    // setTimeout(() => {
+    //     addBotMessage("This is a response from the chatbot.");
+    // }, 500);
+    // }
+
+</script>

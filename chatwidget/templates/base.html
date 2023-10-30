@@ -5,10 +5,22 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <link href="{% static 'css/main.min.css' %}" rel="stylesheet">
+    <style>
+        .overflow-y-auto::-webkit-scrollbar {
+            width: 0.2em;
+        }
+
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.200);
+        }
+    </style>
 </head>
 <body class="flex flex-col justify-between min-h-screen">
     {% include 'components/chat.html' %}
-    {% block content %}
-    {% endblock content %}
+    <div class="md:mb-auto md:mt-16 mb-12">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <script type="text/javascript" src="{% static 'flowbite/dist/flowbite.min.js' %}"></script>
 </body>
 </html>
