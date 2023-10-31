@@ -1,6 +1,6 @@
 from django.db.models.query import QuerySet
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from .models import Chat, Message
 from account.models import User
 from django.db.models import Q
@@ -8,14 +8,23 @@ from django.http import JsonResponse
 from django.views import View
 from rest_framework import views, response
 from .serializers import ChatSerializer
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.http import Http404
 
 
-class ChatList(ListView):
+class CheckPermissions(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self) -> bool | None:
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return True
+        raise Http404
+    
+
+class ChatList(CheckPermissions, ListView):
     model = Chat
     template_name = 'chat-list.html'
 
 
-class AgentList(ListView):
+class AgentList(CheckPermissions, ListView):
     template_name = 'agent-list.html'
 
     def get_queryset(self):
@@ -27,49 +36,10 @@ class AgentList(ListView):
         return context
 
 
-class ChatCreateView(View):
-    def post(self, request):
-        if request.user.is_authenticated:
-            client_name = request.user.first_name
-            client = request.user
-        else:
-            client_name = request.POST.get('content', 'Анонимный пользователь')
-            client = None
-
-        c = Chat.objects.create(client_name=client_name, client=client)
-
-        return JsonResponse({'chat': 'success'})
-
-
-
-def chat_delete(request, uuid):
-    pass
-
-
-def chat(request, uuid):
-    pass
-
-
-def get_chat_id(request):
-    sk = request.session.session_key
-
-    if sk:
-        if request.user.is_authenticated:
-            c, trash = Chat.objects.get_or_create(client=request.user)
-        else:
-            c, trash = Chat.objects.get_or_create(sk=sk)
-    else:
-        request.session['chat'] = []
-        request.session.save()
-        sk = request.session.session_key
-        c = Chat.objects.create(sk=sk)
-
-    return JsonResponse({'chatId': c.pk})
-
-
 class ChatAPIView(views.APIView):
     def post(self, request):
         sk = request.session.session_key
+
         if sk:
             if request.user.is_authenticated:
                 data, trash = Chat.objects.get_or_create(client=request.user)
@@ -82,5 +52,9 @@ class ChatAPIView(views.APIView):
             data = Chat.objects.create(sk=sk)
 
         serializer = ChatSerializer(data)
-
         return response.Response(serializer.data)
+
+
+class ChatDetail(CheckPermissions, DetailView):
+    model = Chat
+    template_name = 'agent-chat.html'

@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin, UserManager, AbstractBa
 
 
 class CustomUserManager(UserManager):
-    def _create_user(self, first_name, last_name, email, phone, password, **extra_fields):
+    def _create_user(self, first_name, phone, last_name, email, password, **extra_fields):
         if not email:
             raise ValueError("Неверная почта")
         
@@ -22,6 +22,7 @@ class CustomUserManager(UserManager):
     def create_superuser(self, first_name=None, phone=None, last_name=None, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        print(email)
         return self._create_user(first_name, last_name, phone, email, password, **extra_fields)
 
 
@@ -42,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone']
 
     def __str__(self):
         return self.email

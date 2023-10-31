@@ -5,15 +5,15 @@ import uuid
 
 class Message(models.Model):
     content = models.TextField()
-    author_name = models.CharField(max_length=64)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    is_agent = models.BooleanField(default=False)
+    # created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-created_at', )
 
     def __str__(self) -> str:
-        return self.content
+        return self.created_at.strftime('%H:%M %d.%m.%Y')
 
 
 class Chat(models.Model):
