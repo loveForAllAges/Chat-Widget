@@ -105,6 +105,13 @@
         console.log("ON OPEN");
     }
 
+    chatInputAdmin.onkeyup = function(e) {
+        if (e.keyCode == 13 && chatInputAdmin.value !== '') {
+            sendMessageAdmin()
+            checkInputAdmin()
+        }
+    }
+
     function sendMessageAdmin() {
         chatSocketAdmin.send(JSON.stringify({
             'type': 'message',

@@ -89,6 +89,11 @@
 
     function onChatMessage(data) {
         if (data.type === 'chat_message') {
+            let typing = document.getElementById('typing')
+
+            if (typing) {
+                typing.remove()
+            }
             if (data.is_agent) {
                 chatWindow.innerHTML += `
                 <div class="">
@@ -108,6 +113,14 @@
                 </div>
                 `
             }
+        } else if (data.type === 'chat_info') {
+            chatWindow.innerHTML += `
+            <div class="text-center">
+                <div class="mb-2 text-gray-500 p-2 inline-block text-xs">
+                    <span class="">${data.content}</span>
+                </div>
+            </div>
+            `
         }
         scrollToBottom()
     }
@@ -136,30 +149,23 @@
         chatSocket = new WebSocket(`ws://${window.location.host}/ws/${data.pk}/`);
 
         chatSocket.onmessage = function(e) {
-            console.log("ON MESSAGE");
             onChatMessage(JSON.parse(e.data))
-        }
-
-        chatSocket.onclose = function(e) {
-            console.log("ON CLOSE");
-        }
-
-        chatSocket.onopen = function(e) {
-            console.log("ON OPEN");
         }
         scrollToBottom()
     }
-
-    // sendChatMessageBtn.onclick = function(e) {
-    //     joinChat();
-    //     chatInput.value = '';
-    // }
 
     function checkInput() {
         if (chatInput.value === '') {
             sendChatMessageBtn.disabled = true;
         } else {
             sendChatMessageBtn.disabled = false;
+        }
+    }
+
+    chatInput.onkeyup = function(e) {
+        if (e.keyCode == 13 && chatInput.value !== '') {
+            sendMessage()
+            checkInput()
         }
     }
 

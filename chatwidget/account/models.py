@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin, UserManager, AbstractBa
 
 
 class CustomUserManager(UserManager):
-    def _create_user(self, first_name, phone, last_name, email, password, **extra_fields):
+    def _create_user(self, first_name, last_name, phone, email, password, **extra_fields):
         if not email:
             raise ValueError("Неверная почта")
         

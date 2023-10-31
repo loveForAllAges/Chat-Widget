@@ -8,10 +8,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['pk']
         self.chat_group_name = f'chat_{self.chat_id}'
+        self.user = self.scope['user']
         
         await self.get_chat()
         await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
         await self.accept()
+
+        if (self.user.is_staff or self.user.is_superuser) and not await self.check_client():
+            await self.channel_layer.group_send(
+                self.chat_group_name,
+                {
+                    'type': 'chat_info',
+                    'content': f'Оператор {self.user.first_name} {self.user.last_name} зашел в чат'
+                }
+            )
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.chat_group_name, self.channel_name)
@@ -24,8 +34,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if type == 'message':
             new_message = await self.create_message(is_agent, content)
-            print(new_message.created_at_formatted())
-
             await self.channel_layer.group_send(
                 self.chat_group_name, {
                     'type': 'chat_message',
@@ -43,9 +51,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'created_at_formatted': event['created_at_formatted'],
         }))
 
+    async def chat_info(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'chat_info',
+            'content': event['content']
+        }))
+
     @sync_to_async
     def get_chat(self):
         self.chat = Chat.objects.get(pk=self.chat_id)
+
+    @sync_to_async
+    def check_client(self):
+        return self.chat == self.user.chat.first()
 
     @sync_to_async
     def create_message(self, is_agent, content):

@@ -10,6 +10,7 @@ from rest_framework import views, response
 from .serializers import ChatSerializer
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import Http404
+from django.db.models import Count
 
 
 class CheckPermissions(LoginRequiredMixin, UserPassesTestMixin):
@@ -20,8 +21,8 @@ class CheckPermissions(LoginRequiredMixin, UserPassesTestMixin):
     
 
 class ChatList(CheckPermissions, ListView):
-    model = Chat
     template_name = 'chat-list.html'
+    queryset = Chat.objects.annotate(num_messages=Count('messages')).filter(num_messages__gt=0)
 
 
 class AgentList(CheckPermissions, ListView):
