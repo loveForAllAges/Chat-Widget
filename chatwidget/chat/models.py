@@ -35,7 +35,7 @@ class Chat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('created_at', )
+        ordering = ('-created_at', )
 
     def last_message(self):
         return self.messages.last()

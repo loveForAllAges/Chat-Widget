@@ -13,19 +13,19 @@ from django.http import Http404
 from django.db.models import Count
 
 
-class CheckPermissions(LoginRequiredMixin, UserPassesTestMixin):
+class StaffOnly(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self) -> bool | None:
         if self.request.user.is_staff or self.request.user.is_superuser:
             return True
         raise Http404
     
 
-class ChatList(CheckPermissions, ListView):
+class ChatList(StaffOnly, ListView):
     template_name = 'chat-list.html'
-    queryset = Chat.objects.annotate(num_messages=Count('messages')).filter(num_messages__gt=0)
+    queryset = Chat.objects.annotate(num_messages=Count('messages')).filter(num_messages__gt=0).order_by('-created_at')
 
 
-class AgentList(CheckPermissions, ListView):
+class AgentList(StaffOnly, ListView):
     template_name = 'agent-list.html'
 
     def get_queryset(self):
@@ -56,6 +56,6 @@ class ChatAPIView(views.APIView):
         return response.Response(serializer.data)
 
 
-class ChatDetail(CheckPermissions, DetailView):
+class ChatDetail(StaffOnly, DetailView):
     model = Chat
     template_name = 'agent-chat.html'

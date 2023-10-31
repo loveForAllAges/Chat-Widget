@@ -10,5 +10,5 @@ def landing(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chat.urls')),
-    path('', landing),
+    path('', landing, name='landing'),
 ]

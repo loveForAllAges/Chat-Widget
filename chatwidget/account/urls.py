@@ -21,4 +21,8 @@ urlpatterns = [
     # path('password-reset-complete/', views.CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('adm/users/', views.UserListView.as_view(), name='user-list'),
+
+
+
+    path('<uuid:pk>/', views.AccountDetailView.as_view(), name='account-detail')
 ]

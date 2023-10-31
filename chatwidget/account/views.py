@@ -1,6 +1,6 @@
 from typing import Any
 from django.forms.models import BaseModelForm
-from django.views.generic import ListView, CreateView, UpdateView, FormView
+from django.views.generic import ListView, CreateView, UpdateView, FormView, DetailView
 from .models import User
 from django.urls import reverse_lazy
 from .forms import (
@@ -27,6 +27,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, LoginView
 from django.contrib.auth import login
+from chat.views import StaffOnly
 
 
 class EmailThread(threading.Thread):
@@ -191,3 +192,8 @@ class AccountEditView(LoginRequiredMixin, View):
             return redirect('account')
 
         return render(request, self.template_name, {'form': form})
+
+
+class AccountDetailView(StaffOnly, DetailView):
+    model = User
+    template_name = 'account_detail.html'

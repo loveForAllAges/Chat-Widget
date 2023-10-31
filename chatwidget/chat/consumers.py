@@ -19,7 +19,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.chat_group_name,
                 {
                     'type': 'chat_info',
-                    'content': f'Оператор {self.user.first_name} {self.user.last_name} зашел в чат'
+                    'content': f'Менеджер {self.user.first_name} зашел в чат'
                 }
             )
 
