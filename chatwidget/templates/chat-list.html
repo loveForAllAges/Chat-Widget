@@ -30,9 +30,9 @@
                             <tr>
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">{{ chat.client_name }}</td>
                                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{{ chat.last_message.content }}</td>
-                                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{{ chat.client }}</td>
+                                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{{ chat.pk }}</td>
                                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{% include 'components/chat-status.html' %}</td>
-                                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{{ chat.last_message }}</td>
+                                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">{{ chat.last_message.created_at_formatted }}</td>
                                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                                     {% if chat.agent %}
                                     {% else %}
@@ -42,14 +42,14 @@
                                     {% endif %}
                                 </td>
                                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6 md:pr-0 flex justify-end">
-                                    <button type="button" class="justify-end flex items-center rounded-full text-gray-400 hover:text-gray-600" data-dropdown-toggle="more">
+                                    <button type="button" class="justify-end flex items-center rounded-full text-gray-400 hover:text-gray-600" data-dropdown-toggle="more-{{ forloop.counter }}">
                                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
                                         </svg>
                                     </button>
                                 </td>
                             </tr>
-                            <div id="more" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 w-48">
+                            <div id="more-{{ forloop.counter }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 w-48">
                                 <ul class="py-2 text-sm text-gray-700">
                                     <li>
                                         <a href="{% url 'chat-detail' chat.pk %}" class="block px-4 py-2 hover:bg-gray-100">Подробнее</a>

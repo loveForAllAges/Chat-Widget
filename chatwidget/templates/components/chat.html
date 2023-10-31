@@ -48,6 +48,10 @@
     const chatClose = document.getElementById("chat-close");
     let chatSocket = null
 
+    function scrollToBottom() {
+        chatWindow.scrollTop = chatWindow.scrollHeight
+    }
+
     function getCookie(name) {
         var cookieValue = null
 
@@ -84,15 +88,13 @@
     }
 
     function onChatMessage(data) {
-        console.log('ON CHAT MESSAGE')
-
         if (data.type === 'chat_message') {
             if (data.is_agent) {
                 chatWindow.innerHTML += `
                 <div class="">
                     <div class="mb-2 bg-gray-200 text-gray-900 rounded-lg p-2 inline-block text-sm">
                         <span class="">${data.content}</span>
-                        <span class="-mb-1 block w-full text-xs text-gray-400 text-end">${data.created_at}</span>
+                        <span class="-mb-1 block w-full text-xs text-gray-400 text-end">${data.created_at_formatted}</span>
                     </div>
                 </div>
                 `
@@ -101,12 +103,13 @@
                 <div class="text-right">
                     <div class="mb-2 text-white bg-gray-600 rounded-lg p-2 inline-block text-sm">
                         <span class="">${data.content}</span>
-                        <span class="-mb-1 block w-full text-xs text-gray-200 text-end">${data.created_at}</span>
+                        <span class="-mb-1 block w-full text-xs text-gray-200 text-end">${data.created_at_formatted}</span>
                     </div>
                 </div>
                 `
             }
         }
+        scrollToBottom()
     }
 
     chatClose.onclick = function(e) {
@@ -125,12 +128,12 @@
 
     chatOpen.onclick = async function(e) {
         data = await getChatData();
-        console.log(data);
         for (i in data.messages) {
-            onChatMessage(i);
+            data.messages[i]['type'] = 'chat_message'
+            onChatMessage(data.messages[i]);
         }
 
-        chatSocket = new WebSocket(`ws://${window.location.host}/ws/${data.id}/`);
+        chatSocket = new WebSocket(`ws://${window.location.host}/ws/${data.pk}/`);
 
         chatSocket.onmessage = function(e) {
             console.log("ON MESSAGE");
@@ -144,6 +147,7 @@
         chatSocket.onopen = function(e) {
             console.log("ON OPEN");
         }
+        scrollToBottom()
     }
 
     // sendChatMessageBtn.onclick = function(e) {

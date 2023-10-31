@@ -1,6 +1,5 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from django.utils.timesince import timesince
 from asgiref.sync import sync_to_async
 from .models import Message, Chat
 
@@ -23,17 +22,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         content = text_data_json['content']
         is_agent = text_data_json['is_agent']
 
-        print('RECEIVE:', text_data_json)
-
         if type == 'message':
             new_message = await self.create_message(is_agent, content)
+            print(new_message.created_at_formatted())
 
             await self.channel_layer.group_send(
                 self.chat_group_name, {
                     'type': 'chat_message',
                     'content': content,
                     'is_agent': is_agent,
-                    'created_at': timesince(new_message.created_at),
+                    'created_at_formatted': new_message.created_at_formatted(),
                 }
             )
 
@@ -41,7 +39,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': event['type'],
             'content': event['content'],
-            'created_at': event['created_at'],
+            'is_agent': event['is_agent'],
+            'created_at_formatted': event['created_at_formatted'],
         }))
 
     @sync_to_async

@@ -10,10 +10,13 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('-created_at', )
+        ordering = ('created_at', )
+
+    def created_at_formatted(self):
+        return self.created_at.strftime('%H:%M')
 
     def __str__(self) -> str:
-        return self.created_at.strftime('%H:%M %d.%m.%Y')
+        return self.content
 
 
 class Chat(models.Model):
@@ -32,10 +35,10 @@ class Chat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('-created_at', )
+        ordering = ('created_at', )
 
     def last_message(self):
-        return self.messages.first()
+        return self.messages.last()
 
     def __str__(self) -> str:
         return self.created_at.strftime('%H:%M %d.%m.%Y')
