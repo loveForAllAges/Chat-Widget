@@ -1,12 +1,13 @@
+from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from .models import Chat, Message
 from account.models import User
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
-from rest_framework import views, response
+from rest_framework import views, response, status
 from .serializers import ChatSerializer
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import Http404
@@ -21,7 +22,7 @@ class StaffOnly(LoginRequiredMixin, UserPassesTestMixin):
     
 
 class ChatList(StaffOnly, ListView):
-    template_name = 'chat-list.html'
+    template_name = 'admin_chat.html'
     queryset = Chat.objects.annotate(num_messages=Count('messages')).filter(num_messages__gt=0).order_by('-created_at')
 
 
@@ -56,6 +57,62 @@ class ChatAPIView(views.APIView):
         return response.Response(serializer.data)
 
 
-class ChatDetail(StaffOnly, DetailView):
-    model = Chat
-    template_name = 'agent-chat.html'
+class ChatDetail(StaffOnly, View):
+    template_name = 'admin_chat.html'
+
+    def __get_data(self, request, pk):
+        context = dict()
+        context['object'] = Chat.objects.get(pk=pk)
+        context['object_list'] = Chat.objects.annotate(num_messages=Count('messages')).filter(
+        Q(num_messages__gt=0) & (Q(agent__isnull=True) | Q(agent=request.user))).order_by('-created_at')
+        return context
+    
+    def get(self, request, pk):
+        return render(request, self.template_name, context=self.__get_data(request, pk))
+    
+    def post(self, request, pk):
+        pk = request.POST.get('chat_id', None)
+        chat = get_object_or_404(Chat, pk=pk, agent__isnull=True)
+        chat.agent = request.user
+        chat.status = 1
+        chat.save()
+
+        return render(request, self.template_name, context=self.__get_data(request, pk))
+
+
+class ChatClose(StaffOnly, View):
+    def post(self, request):
+        pk = request.POST.get('chat_id', None)
+        chat = get_object_or_404(Chat, pk=pk, agent=request.user)
+        chat.agent = None
+        chat.status = 3
+        chat.save()
+        return redirect('chat-detail', pk)
+
+
+# class ActivateChatAPIView(StaffOnly, views.APIView):
+#     def post(self, request):
+#         try:
+#             chat = Chat.objects.get(pk=request.data['chat_id'], agent__isnull=True)
+#             chat.agent = request.user
+#             chat.status = 1
+#             chat.save()
+#             data = ChatSerializer(chat).data
+#             st = status.HTTP_200_OK
+#         except:
+#             data = dict()
+#             st = status.HTTP_404_NOT_FOUND
+
+#         return response.Response(data, status=st)
+
+
+# class ActivateChatAPIView(StaffOnly, View):
+#     def post(self,request):
+#         pk = request.data['chat_id']
+#         print(pk)
+#         chat = get_object_or_404(Chat, pk=pk, agent__isnull=True)
+#         chat.agent = request.user
+#         chat.status = 1
+#         chat.save()
+
+#         return redirect('chat-detail', pk)

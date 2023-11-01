@@ -18,6 +18,9 @@
 <body class="h-full overflow-hidden">
     {% block content %}
     {% endblock content %}
+    <script type="text/javascript" src="{% static 'js/getCookie.js' %}"></script>
     <script type="text/javascript" src="{% static 'flowbite/dist/flowbite.min.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>

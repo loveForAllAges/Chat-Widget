@@ -15,6 +15,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         if (self.user.is_staff or self.user.is_superuser) and not await self.check_client():
+            await self.update_chat()
             await self.channel_layer.group_send(
                 self.chat_group_name,
                 {
@@ -63,7 +64,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def check_client(self):
-        return self.chat == self.user.chat.first()
+        return self.chat == self.user.chat.first() or self.chat.agent
+
+    @sync_to_async
+    def update_chat(self):
+        self.chat.status = 1
+        self.chat.agent = self.user
+        self.chat.save()
 
     @sync_to_async
     def create_message(self, is_agent, content):

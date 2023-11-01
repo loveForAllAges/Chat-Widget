@@ -1,0 +1,55 @@
+<div class="block flex-shrink-0">
+    <div class="relative h-full flex w-96 flex-col border-r border-gray-200">
+        <div class="flex-shrink-0 border-b">
+            <div class="flex h-16 flex-col justify-center px-4">
+                <div class="flex items-baseline space-x-3">
+                    <h2 class="text-lg font-medium text-gray-900">Диалоги</h2>
+                    <p class="text-sm font-medium text-gray-500">{{ object_list|length }}</p>
+                </div>
+            </div>
+            <!-- <div class="border-t border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">8 новых</div> -->
+        </div>
+        <div class="min-h-0 flex-1 overflow-y-auto">
+            {% if object_list %}
+            <ul role="list" class="divide-y divide-gray-200 border-b">
+            {% for chat in object_list %}
+                <li class="relative p-4 {% if object.pk != chat.pk %}hover:bg-gray-50 bg-white{% else %}bg-gray-100{% endif %}">
+                    <div class="flex justify-between items-end">
+                        <div class="flex items-center space-x-2">
+                            <div class="rounded-full h-9 w-9 p-[1px] {% if chat.client %}bg-gradient-to-r from-blue-600 to-indigo-600{% else %}bg-gray-400{% endif %}">
+                                <div class="rounded-full flex flex-col justify-between h-full bg-gray-100">
+                                    <svg class="rounded-full h-full w-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <a href="{% url 'chat-detail' chat.pk %}" class="block focus:outline-none">
+                                    <span class="absolute inset-0" aria-hidden="true"></span>
+                                    <p class="truncate text-sm font-medium text-gray-900">
+                                    {% if chat.client %}
+                                    {{ chat.client.first_name }} {{ chat.client.last_name }}
+                                    {% else %}
+                                    Анонимный
+                                    {% endif %}
+                                    </p>
+                                    
+                                    <p class="text-sm text-gray-500 line-clamp-1">
+                                    {{ chat.last_message.content }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                        <span class="flex-shrink-0 whitespace-nowrap text-xs text-gray-400">{{ chat.last_message.created_at_formatted }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <div class="flex items-center justify-center h-full">
+                <p class="text-gray-500 text-sm">Нет актуальных диалогов</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

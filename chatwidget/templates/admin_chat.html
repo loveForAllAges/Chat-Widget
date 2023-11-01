@@ -1,0 +1,23 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+{% include 'components/admin/menu.html' %}
+<div class="flex flex-1 flex-col md:pl-64 h-screen">
+    {% include 'components/admin/header.html' %}
+    <div class="flex flex-1 items-stretch overflow-hidden">
+        {% include 'components/admin/chatList.html' %}
+        {% include 'components/admin/chatWindow.html' %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    const chatId = window.location.pathname.split('/')[2]
+</script>
+{% if object.agent %}
+<script src="{% static 'js/admin.js' %}"></script>
+{% else %}
+<!-- <script src="{% static 'js/activateChat.js' %}"></script> -->
+{% endif %}
+{% endblock scripts %}
