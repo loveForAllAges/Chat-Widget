@@ -19,7 +19,7 @@
                                 <span>Профиль</span>
                             </button>
                             {% endif %}
-                            <form action="" method="POST">
+                            <form action="{% url 'chat-close' %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="chat_id" value="{{ object.pk }}">
                                 <button type="submit" class="relative -ml-px hidden items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 sm:inline-flex">

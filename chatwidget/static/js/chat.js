@@ -10,7 +10,7 @@ function scrollToBottom() {
 }
 
 async function getChatData() {
-    const response = await fetch('/chat/get-chat-data/', {
+    const response = await fetch('/dialogs/get-chat-data/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

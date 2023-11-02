@@ -5,5 +5,5 @@ from django.shortcuts import render
 
 urlpatterns = [
     path('', views.AccountListView.as_view(), name='account-list'),
-    # path('<uuid:pk>/', views.AccountDetailView.as_view(), name='account-detail')
+    path('<uuid:pk>/', views.AccountDetailView.as_view(), name='account-detail')
 ]

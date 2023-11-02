@@ -72,6 +72,7 @@ class ChatDetail(StaffOnly, View):
     
     def post(self, request, pk):
         pk = request.POST.get('chat_id', None)
+        print(pk)
         chat = get_object_or_404(Chat, pk=pk, agent__isnull=True)
         chat.agent = request.user
         chat.status = 1
