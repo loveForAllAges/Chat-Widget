@@ -35,7 +35,7 @@
         </nav>
         </div>
         <div class="flex flex-shrink-0 border-t border-gray-200">
-            <a href="#" class="group block w-full flex-shrink-0 p-4">
+            <a href="{% url 'account-detail' request.user.pk %}" class="group block w-full flex-shrink-0 p-4">
                 <div class="flex items-center">
                 <div class="rounded-full h-9 w-9 bg-gradient-to-r p-[1px] from-blue-600 to-indigo-600">
                     <div class="rounded-full flex flex-col justify-between h-full bg-white p-[1px]">

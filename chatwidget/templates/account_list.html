@@ -18,16 +18,53 @@
             <div class="flex flex-1">
                 <div class="inline-block min-w-full border-b border-gray-200 align-middle">
                     <table class="min-w-full">
-                        <thead>
+                        <thead class="hidden md:table-header-group">
                             <tr class="">
                                 <th class="border-b border-gray-200 bg-gray-50 p-4 text-left text-sm font-semibold text-gray-900">Пользователь</th>
                                 <th class="border-b border-gray-200 bg-gray-50 p-4 text-right text-sm font-semibold text-gray-900">Статус</th>
-                                <th class="border-b border-gray-200 bg-gray-50 p-4 text-left text-sm font-semibold text-gray-900">Последняя активность</th>
+                                <th class="border-b border-gray-200 bg-gray-50 p-4 text-left text-sm font-semibold text-gray-900 hidden md:table-cell">Последняя активность</th>
                                 <th class="hidden border-b border-gray-200 bg-gray-50 p-4 text-right text-sm font-semibold text-gray-900 md:table-cell">Дата регистрации</th>
                                 <!-- <th class="border-b border-gray-200 bg-gray-50 py-3 pr-6 text-right text-sm font-semibold text-gray-900"></th> -->
                             </tr>
                         </thead>
                         <tbody class="divide-y bg-white">
+                            <tr class="hover:bg-gray-50 duration-150 relative">
+                                <td class="w-full max-w-0 whitespace-nowrap p-4 text-sm font-medium text-gray-900">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="font-normal text-gray-500">Вы</span>
+
+                                        <div class="rounded-full h-6 w-6 bg-gradient-to-r p-[1px] from-blue-600 to-indigo-600">
+                                            <div class="rounded-full flex flex-col justify-between h-full bg-white p-[1px]">
+                                                <svg class="rounded-full h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <a href="{% url 'account-detail' request.user.pk %}" class="truncate">
+                                            <span class="absolute inset-0" aria-hidden="true"></span>
+                                            <span>
+                                                {{ request.user.first_name }} {{ request.user.last_name }}
+                                                <span class="font-normal text-gray-500">{{ request.user.email }}</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">
+                                    {% if request.user.is_superuser %}
+                                    Администратор
+                                    {% elif request.user.is_staff %}
+                                    Сотрудник
+                                    {% else %}
+                                    Пользователь
+                                    {% endif %}
+                                </td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">{{ request.user.date_joined_formatted }}</td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">{{ request.user.last_login_formatted }}</td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm font-medium">
+                                    <a href="#" class="text-blue-600 hover:text-indigo-900"></a>
+                                </td>
+                            </tr>
                             {% for user in object_list %}
                             <tr class="hover:bg-gray-50 duration-150 relative">
                                 <td class="w-full max-w-0 whitespace-nowrap p-4 text-sm font-medium text-gray-900">
@@ -58,8 +95,8 @@
                                     Пользователь
                                     {% endif %}
                                 </td>
-                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">12:23 10.10.23</td>
-                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">12:23 10.10.23</td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">{{ user.date_joined_formatted }}</td>
+                                <td class="hidden whitespace-nowrap p-4 text-right text-sm text-gray-500 md:table-cell">{{ user.last_login_formatted }}</td>
                                 <td class="hidden whitespace-nowrap p-4 text-right text-sm font-medium">
                                     <a href="#" class="text-blue-600 hover:text-indigo-900"></a>
                                 </td>

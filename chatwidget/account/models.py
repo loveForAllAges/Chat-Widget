@@ -49,3 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def date_joined_formatted(self):
+        return self.date_joined.strftime('%H:%M %d.%m.%Y')
+    
+    def last_login_formatted(self):
+        return self.last_login.strftime('%H:%M %d.%m.%Y')

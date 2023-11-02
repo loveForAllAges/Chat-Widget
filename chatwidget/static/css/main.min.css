@@ -2824,12 +2824,24 @@ input:checked + .toggle-bg {
     margin-left: 1.5rem;
   }
 
+  .md\:block {
+    display: block;
+  }
+
+  .md\:inline-block {
+    display: inline-block;
+  }
+
   .md\:flex {
     display: flex;
   }
 
   .md\:table-cell {
     display: table-cell;
+  }
+
+  .md\:table-header-group {
+    display: table-header-group;
   }
 
   .md\:w-64 {
