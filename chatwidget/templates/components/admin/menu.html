@@ -7,7 +7,7 @@
         </div>
         <nav class="mt-5 flex-1 space-y-1 bg-white px-2">
             <a href="{% url 'chat-list' %}" class="
-            {% if 'chat' in request.path %}bg-gray-100 text-gray-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}
+            {% if 'dialogs' in request.path %}bg-gray-100 text-gray-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}
             group flex items-center px-2 py-2 text-sm font-medium rounded-md duration-150
             ">
                 <svg class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -16,8 +16,8 @@
                 Служба поддержки
             </a>
 
-            <a href="#" class="
-            {% if 'staff' in request.path %}bg-gray-100 text-gray-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}
+            <a href="{% url 'account-list' %}" class="
+            {% if 'accounts' in request.path %}bg-gray-100 text-gray-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}
             group flex items-center px-2 py-2 text-sm font-medium rounded-md duration-150
             ">
                 <svg class="text-gray-400 group-hover:text-gray-500 mr-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">

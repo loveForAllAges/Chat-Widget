@@ -9,6 +9,7 @@ def landing(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('chat/', include('chat.urls')),
+    path('dialogs/', include('chat.urls')),
+    path('accounts/', include('account.urls')),
     path('', landing, name='landing'),
 ]
